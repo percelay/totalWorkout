@@ -1,4 +1,5 @@
-import { Clock } from 'lucide-react';
+import { useState } from 'react';
+import { CheckCircle, Clock, X } from 'lucide-react';
 
 const schedule = [
   {
@@ -65,6 +66,26 @@ const typeBadge = {
 };
 
 export default function Schedule() {
+  const [selected, setSelected] = useState(null); // { day, time, name, type }
+  const [formState, setFormState] = useState('idle'); // idle | submitting | success
+
+  function openSignUp(day, cls) {
+    setSelected({ day, ...cls });
+    setFormState('idle');
+  }
+
+  function closeModal() {
+    setSelected(null);
+    setFormState('idle');
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    setFormState('submitting');
+    // Simulate a short network delay
+    setTimeout(() => setFormState('success'), 1200);
+  }
+
   return (
     <section id="schedule" className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -99,6 +120,7 @@ export default function Schedule() {
                 <th className="px-4 py-3 text-left font-semibold">Time</th>
                 <th className="px-4 py-3 text-left font-semibold">Class</th>
                 <th className="px-4 py-3 text-left font-semibold">Type</th>
+                <th className="px-4 py-3 text-right font-semibold" />
               </tr>
             </thead>
             <tbody>
@@ -129,6 +151,14 @@ export default function Schedule() {
                       >
                         {cls.type}
                       </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        onClick={() => openSignUp(day.day, cls)}
+                        className="text-xs font-semibold text-brand-blue hover:text-brand-blue-dark transition-colors cursor-pointer"
+                      >
+                        Sign Up
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -165,11 +195,19 @@ export default function Schedule() {
                         {cls.time}
                       </p>
                     </div>
-                    <span
-                      className={`shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold ${typeBadge[cls.type]}`}
-                    >
-                      {cls.type}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold ${typeBadge[cls.type]}`}
+                      >
+                        {cls.type}
+                      </span>
+                      <button
+                        onClick={() => openSignUp(day.day, cls)}
+                        className="shrink-0 text-xs font-semibold text-white bg-brand-blue hover:bg-brand-blue-dark px-3 py-1 rounded-full transition-colors cursor-pointer"
+                      >
+                        Sign Up
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -177,6 +215,111 @@ export default function Schedule() {
           ))}
         </div>
       </div>
+
+      {/* Sign-up modal */}
+      {selected && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeModal();
+          }}
+        >
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <div>
+                <h3 className="font-semibold text-brand-slate">
+                  {selected.name}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {selected.day} at {selected.time} &middot;{' '}
+                  <span
+                    className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${typeBadge[selected.type]}`}
+                  >
+                    {selected.type}
+                  </span>
+                </p>
+              </div>
+              <button
+                onClick={closeModal}
+                className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                aria-label="Close"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal body */}
+            <div className="px-6 py-5">
+              {formState === 'success' ? (
+                <div className="text-center py-6">
+                  <CheckCircle
+                    size={48}
+                    className="mx-auto text-brand-green mb-4"
+                  />
+                  <h4 className="text-xl font-semibold text-brand-slate mb-2">
+                    You're signed up!
+                  </h4>
+                  <p className="text-gray-500 text-sm mb-6">
+                    We'll see you at <strong>{selected.name}</strong> on{' '}
+                    {selected.day} at {selected.time}.
+                  </p>
+                  <button
+                    onClick={closeModal}
+                    className="text-sm font-semibold text-brand-blue hover:text-brand-blue-dark transition-colors cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-brand-slate mb-1">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Jane Doe"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-brand-slate mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="jane@example.com"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-brand-slate mb-1">
+                      Phone <span className="text-gray-400">(optional)</span>
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="(973) 555-1234"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={formState === 'submitting'}
+                    className="w-full bg-brand-blue hover:bg-brand-blue-dark disabled:opacity-60 text-white font-semibold py-2.5 rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed text-sm"
+                  >
+                    {formState === 'submitting'
+                      ? 'Signing up…'
+                      : 'Confirm Sign Up'}
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
