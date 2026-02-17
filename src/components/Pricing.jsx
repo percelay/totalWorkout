@@ -26,7 +26,7 @@ export default function Pricing() {
             Pricing
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-brand-slate">
-            Simple, Transparent Pricing
+            Pricing
           </h2>
         </div>
 

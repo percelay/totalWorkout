@@ -1,5 +1,3 @@
-import { Heart, ShieldCheck, Users } from 'lucide-react';
-
 export default function About() {
   return (
     <section id="about" className="py-20 bg-white">
@@ -23,7 +21,7 @@ export default function About() {
         </div>
 
         {/* Total Yet Personal */}
-        <div className="max-w-3xl mx-auto text-center mb-14">
+        <div className="max-w-3xl mx-auto text-center">
           <h3 className="text-2xl sm:text-3xl font-bold text-brand-slate">
             Total, Yet Personal
           </h3>
@@ -33,48 +31,7 @@ export default function About() {
             experience for every<strong>BODY</strong>.
           </p>
         </div>
-
-        {/* Three pillars */}
-        <div className="grid md:grid-cols-3 gap-8">
-          <PillarCard
-            Icon={ShieldCheck}
-            title="We Adapt"
-            body="We prod, modify, and individualize training for your specific needs."
-            color="blue"
-          />
-          <PillarCard
-            Icon={Heart}
-            title="We Endure"
-            body="We are not a fad or a gimmick. We prioritize long-term health and logical exercise over fleeting trends."
-            color="green"
-          />
-          <PillarCard
-            Icon={Users}
-            title="We Connect"
-            body="We are your neighborhood studio."
-            color="blue"
-          />
-        </div>
       </div>
     </section>
-  );
-}
-
-function PillarCard({ Icon, title, body, color }) {
-  const colors =
-    color === 'green'
-      ? 'bg-brand-green-light text-brand-green'
-      : 'bg-brand-blue-light text-brand-blue';
-
-  return (
-    <div className="rounded-2xl border border-gray-100 p-8 text-center hover:shadow-md transition-shadow">
-      <div
-        className={`inline-flex items-center justify-center w-14 h-14 rounded-full ${colors} mb-5`}
-      >
-        <Icon size={28} />
-      </div>
-      <h4 className="text-xl font-semibold text-brand-slate mb-2">{title}</h4>
-      <p className="text-gray-600 leading-relaxed">{body}</p>
-    </div>
   );
 }
